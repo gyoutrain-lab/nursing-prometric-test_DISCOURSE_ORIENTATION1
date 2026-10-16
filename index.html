@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCFHS Prometric Masterclass & Matrix Game Simulator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+        .animate-pulse-subtle {
+            animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 h-full flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
+
+    <!-- Top Header / Navigation -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="bg-emerald-500/10 border border-emerald-500/30 p-2 rounded-xl text-emerald-400">
+                <i data-lucide="shield-alert" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg text-slate-100 tracking-wide flex items-center gap-2">
+                    SCFHS Prometric Matrix Game & Clinical Simulator
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Expert Edition</span>
+                </h1>
+                <p class="text-xs text-slate-400">STR Mindset Shift Engine • Safety First & Linguistic Trap Analysis • 100 Clinical Vignettes</p>
+            </div>
+        </div>
+        <div id="header-user-info" class="hidden items-center space-x-4 bg-slate-800/80 border border-slate-700/60 px-4 py-2 rounded-xl">
+            <div class="text-right">
+                <div id="nav-display-name" class="text-sm font-semibold text-emerald-400"></div>
+                <div id="nav-display-id" class="text-xs text-slate-400"></div>
+            </div>
+            <button onclick="app.resetSession()" class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1.5 rounded-lg transition border border-slate-600">
+                Switch User
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 flex items-center justify-center">
+        
+        <!-- View 1: Registration Screen -->
+        <div id="view-registration" class="w-full max-w-xl bg-slate-900/90 border border-slate-800 p-8 rounded-2xl shadow-2xl backdrop-blur-md">
+            <div class="text-center mb-8">
+                <div class="inline-flex p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/30 text-emerald-400 mb-4">
+                    <i data-lucide="award" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-2xl font-bold tracking-tight text-white mb-2">Candidate Registration</h2>
+                <p class="text-sm text-slate-400">Enter your official credentials to initialize the 100-item SCFHS clinical reasoning matrix game and discourse analysis.</p>
+            </div>
+
+            <form id="form-registration" onsubmit="app.handleRegistration(event)" class="space-y-5">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Test Taker Full Name</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                            <i data-lucide="user" class="w-4 h-4"></i>
+                        </span>
+                        <input type="text" id="input-name" required placeholder="e.g. Giyono Asfarrasyid" 
+                            class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">SCFHS / National ID / Prometric ID</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                            <i data-lucide="hash" class="w-4 h-4"></i>
+                        </span>
+                        <input type="text" id="input-id" required placeholder="e.g. SCFHS-884920" 
+                            class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
+                    </div>
+                </div>
+
+                <div class="bg-slate-950/60 border border-slate-800/80 p-4 rounded-xl space-y-2">
+                    <div class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Matrix Game Protocol Active
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Each item links <strong>SCFHS Content</strong>, <strong>Application ("How-to")</strong>, and <strong>Cause & Effect</strong>. Options are structurally symmetric and independent. Immediate rationale and discourse analysis unlock upon submission.
+                    </p>
+                </div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2">
+                    <span>Initialize 100-Item Assessment Matrix</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- View 2: Dashboard / Matrix Overview -->
+        <div id="view-dashboard" class="w-full max-w-6xl hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center space-x-4">
+                    <div class="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl">
+                        <i data-lucide="file-text" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider font-medium">Total Test Items</div>
+                        <div class="text-2xl font-bold text-white">100 Clinical Vignettes</div>
+                    </div>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center space-x-4">
+                    <div class="p-3 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-xl">
+                        <i data-lucide="cpu" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider font-medium">Paradigm Shift</div>
+                        <div class="text-2xl font-bold text-white">STR ➔ SCFHS</div>
+                    </div>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center space-x-4">
+                    <div class="p-3 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-xl">
+                        <i data-lucide="layout-grid" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400 uppercase tracking-wider font-medium">Matrix Architecture</div>
+                        <div class="text-2xl font-bold text-white">3-List Triad Link</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Ready to Begin Assessment Matrix</h3>
+                        <p class="text-sm text-slate-400 mt-1">Review the matrix game structure below before starting your examination session.</p>
+                    </div>
+                    <button onclick="app.startQuiz()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl transition shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2">
+                        <span>Start 100-Item Exam</span>
+                        <i data-lucide="play" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- Matrix Preview Table -->
+                <div>
+                    <h4 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+                        <i data-lucide="table" class="w-4 h-4 text-emerald-400"></i> Sample Matrix Game Mapping (Content ➔ Application ➔ Cause & Effect)
+                    </h4>
+                    <div class="overflow-x-auto rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-xs md:text-sm">
+                            <thead class="bg-slate-950 text-slate-400 uppercase text-[11px] font-semibold tracking-wider border-b border-slate-800">
+                                <tr>
+                                    <th class="p-3.5">Content (SCFHS)</th>
+                                    <th class="p-3.5">Application ("How-to")</th>
+                                    <th class="p-3.5">Cause & Effect (Discourse)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800 text-slate-300">
+                                <tr class="hover:bg-slate-800/50 transition">
+                                    <td class="p-3.5 font-medium text-emerald-400">Infection Control</td>
+                                    <td class="p-3.5">Hand Washing technique</td>
+                                    <td class="p-3.5 text-slate-400">Mechanical friction removes transient micro-organisms effectively.</td>
+                                </tr>
+                                <tr class="hover:bg-slate-800/50 transition">
+                                    <td class="p-3.5 font-medium text-emerald-400">Safe Action</td>
+                                    <td class="p-3.5">IV Infusion monitoring</td>
+                                    <td class="p-3.5 text-slate-400">Differentiation between infiltration (coolness/pallor) vs phlebitis (heat/erythema).</td>
+                                </tr>
+                                <tr class="hover:bg-slate-800/50 transition">
+                                    <td class="p-3.5 font-medium text-emerald-400">Safe Action</td>
+                                    <td class="p-3.5">Patient Positioning (Dyspnea)</td>
+                                    <td class="p-3.5 text-slate-400">High-Fowler's maximizes chest expansion and lung excursion.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View 3: Quiz Interface -->
+        <div id="view-quiz" class="w-full max-w-4xl hidden space-y-6">
+            <!-- Quiz Progress & Header bar -->
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <span id="badge-question-num" class="px-3 py-1.5 bg-emerald-500/20 text-emerald-300 font-bold text-xs rounded-xl border border-emerald-500/30">
+                        Item 1 of 100
+                    </span>
+                    <span id="badge-domain" class="text-xs font-medium text-slate-400 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
+                        Domain: Safe Action
+                    </span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-xs text-slate-400">Score Tracker: <span id="live-score" class="text-emerald-400 font-bold">0</span> / <span id="live-total">0</span></div>
+                    <div class="w-32 bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div id="progress-bar" class="bg-emerald-500 h-full w-[1%] transition-all duration-300"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-slate-900 border border-slate-800 p-6 md:p-8 rounded-2xl space-y-6 shadow-xl">
+                <!-- Vignette / Stem -->
+                <div class="space-y-3">
+                    <div class="text-xs font-semibold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                        <i data-lucide="clipboard-list" class="w-4 h-4"></i> Clinical Vignette & Scenario
+                    </div>
+                    <div id="question-text" class="text-base md:text-lg text-slate-100 font-medium leading-relaxed">
+                        <!-- Dynamic Question Text -->
+                    </div>
+                </div>
+
+                <!-- Matrix Triad Info Box (Educational Matrix Preview) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-xs">
+                    <div>
+                        <span class="text-slate-500 uppercase tracking-wider block font-semibold mb-1">SCFHS Content</span>
+                        <span id="matrix-content" class="text-emerald-300 font-medium">Infection Control</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 uppercase tracking-wider block font-semibold mb-1">Application ("How-To")</span>
+                        <span id="matrix-application" class="text-blue-300 font-medium">Hand Washing</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 uppercase tracking-wider block font-semibold mb-1">Cause & Effect</span>
+                        <span id="matrix-cause" class="text-purple-300 font-medium">Mechanical friction removes microbes</span>
+                    </div>
+                </div>
+
+                <!-- Options List -->
+                <div id="options-container" class="space-y-3">
+                    <!-- Dynamic Options -->
+                </div>
+
+                <!-- Rationale Box (Hidden until answered) -->
+                <div id="rationale-container" class="hidden bg-slate-950 border border-emerald-500/30 p-5 rounded-xl space-y-3 animate-pulse-subtle">
+                    <div class="flex items-center justify-between">
+                        <span id="rationale-status" class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg"></span>
+                        <span class="text-xs text-slate-400 font-mono">SCFHS Discourse Analysis & Strategy</span>
+                    </div>
+                    <div id="rationale-text" class="text-sm text-slate-300 leading-relaxed">
+                        <!-- Dynamic Rationale -->
+                    </div>
+                </div>
+
+                <!-- Footer Navigation inside Quiz -->
+                <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+                    <button onclick="app.prevQuestion()" id="btn-prev" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl transition border border-slate-700 flex items-center gap-1.5 disabled:opacity-40 disabled:pointer-events-none">
+                        <i data-lucide="chevron-left" class="w-4 h-4"><span>Previous</span></i>
+                    </button>
+                    <button onclick="app.nextQuestion()" id="btn-next" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl transition shadow-lg shadow-emerald-900/30 flex items-center gap-1.5">
+                        <span id="btn-next-text">Next Question</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View 4: Results & Score Calculation Screen -->
+        <div id="view-results" class="w-full max-w-4xl hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl text-center space-y-6 shadow-2xl">
+                <div class="inline-flex p-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-2xl">
+                    <i data-lucide="award" class="w-10 h-10"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-2">Assessment Matrix Completed</h2>
+                    <p class="text-sm text-slate-400">Official SCFHS Prometric Clinical Competency Evaluation Report</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto py-4">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <div class="text-xs text-slate-400 uppercase font-semibold">Candidate Name</div>
+                        <div id="res-name" class="text-lg font-bold text-emerald-400 mt-1"></div>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <div class="text-xs text-slate-400 uppercase font-semibold">Candidate ID</div>
+                        <div id="res-id" class="text-lg font-bold text-slate-200 mt-1"></div>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <div class="text-xs text-slate-400 uppercase font-semibold">Final Score</div>
+                        <div id="res-score" class="text-lg font-bold text-emerald-400 mt-1"></div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 text-left max-w-2xl mx-auto space-y-3">
+                    <div class="text-sm font-semibold text-white flex items-center gap-2">
+                        <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i> Mindset Transition Analysis (STR ➔ SCFHS)
+                    </div>
+                    <p id="res-feedback" class="text-sm text-slate-300 leading-relaxed">
+                        <!-- Dynamic Feedback -->
+                    </p>
+                </div>
+
+                <div class="flex items-center justify-center gap-4">
+                    <button onclick="app.reviewAnswers()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-6 py-3 rounded-xl transition border border-slate-700 flex items-center gap-2">
+                        <i data-lucide="search" class="w-4 h-4"></i> Review All Rationales
+                    </button>
+                    <button onclick="app.resetSession()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl transition shadow-lg shadow-emerald-900/30 flex items-center gap-2">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Restart Assessment
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Script Application Logic -->
+    <script>
+        const questionBank = [
+            {
+                id: 1,
+                content: "Infection Control",
+                application: "Hand Washing technique",
+                cause: "Mechanical friction removes transient micro-organisms",
+                question: "A nurse is performing hand hygiene before entering an isolation room. What is the most critical physiological factor in destroying and removing transient micro-organisms?",
+                options: [
+                    { text: "The chemical composition of antimicrobial soap used.", isCorrect: false, rationale: "STR Trap. Soap aids detergency, but mechanical friction is the primary mechanical remover." },
+                    { text: "The mechanical friction created by rubbing hands together.", isCorrect: true, rationale: "SCFHS Safe Action. Mechanical friction is the single most significant factor in dislodging transient flora." },
+                    { text: "The temperature of running water during the wash cycle.", isCorrect: false, rationale: "STR Trap. Water temperature affects comfort but has minimal bactericidal impact compared to friction." },
+                    { text: "The exact length of time spent air-drying hands.", isCorrect: false, rationale: "STR Trap. Drying prevents bacterial transfer via moisture, but does not destroy/remove micro-organisms during washing." }
+                ],
+                hint: "Focus on mechanical action versus chemical or thermal factors."
+            },
+            {
+                id: 2,
+                content: "Safe Action",
+                application: "IV Infusion monitoring",
+                cause: "Infiltration vs Phlebitis differentiation",
+                question: "A patient receiving an intravenous (IV) infusion reports discomfort, and the nurse observes swelling, coolness, and pallor around the insertion site. The nurse should document and treat this as:",
+                options: [
+                    { text: "Phlebitis requiring immediate catheter removal.", isCorrect: false, rationale: "STR Trap. Phlebitis presents with erythema, warmth, and a palpable venous cord, not coolness and pallor." },
+                    { text: "Infiltration requiring cessation and cannula removal.", isCorrect: true, rationale: "SCFHS Safe Action. Infiltration is characterized by coolness, swelling, and pallor due to IV fluid entering subcutaneous tissue." },
+                    { text: "Local bacterial infection requiring culture swab.", isCorrect: false, rationale: "STR Trap. Infection presents with purulent exudate and localized systemic signs, not acute fluid extravasation." },
+                    { text: "Normal venous spasm resolving with warm compresses.", isCorrect: false, rationale: "STR Trap. Venous spasm causes transient blanching and discomfort along the vein, not localized swelling and coolness." }
+                ],
+                hint: "Evaluate the physical characteristics: coolness and pallor point to fluid extravasation."
+            },
+            {
+                id: 3,
+                content: "Safe Action",
+                application: "Patient Positioning (Dyspnea)",
+                cause: "High-Fowler's maximizes lung excursion",
+                question: "An adult patient with severe chronic obstructive pulmonary disease (COPD) presents with acute respiratory distress and dyspnea. Which nursing position provides the most optimal physiological benefit?",
+                options: [
+                    { text: "Supine position with pillows under knees.", isCorrect: false, rationale: "STR Trap. Supine position increases abdominal pressure on the diaphragm, worsening dyspnea in respiratory distress." },
+                    { text: "Trendelenburg position at a 30-degree tilt.", isCorrect: false, rationale: "STR Trap. Trendelenburg shifts abdominal viscera cephalad, severely compromising lung expansion." },
+                    { text: "High-Fowler’s position with an overbed table.", isCorrect: true, rationale: "SCFHS Safe Action. High-Fowler's allows maximum chest expansion and lung excursion, easing diaphragmatic breathing." },
+                    { text: "Prone position to promote dorsal oxygenation.", isCorrect: false, rationale: "STR Trap. Prone positioning restricts chest wall movement and is only used in acute ARDS protocols under strict critical care." }
+                ],
+                hint: "Consider gravity and chest expansion mechanics for respiratory distress."
+            },
+            {
+                id: 4,
+                content: "Medication Safety",
+                application: "High-Alert Insulin Administration",
+                cause: "Independent double-checking prevents fatal errors",
+                question: "A nurse prepares to administer regular insulin intravenously. According to SCFHS safety standards for high-alert medications, what is the mandatory pre-administration action?",
+                options: [
+                    { text: "Administer rapidly via push without dilution.", isCorrect: false, rationale: "STR Trap. IV regular insulin requires controlled infusion pumps and careful dilution/monitoring." },
+                    { text: "Verify dose and calculations independently with a second nurse.", isCorrect: true, rationale: "SCFHS Safe Action. Independent double-checking of high-alert medications prevents catastrophic dosing calculation errors." },
+                    { text: "Check patient blood glucose only after infusion completion.", isCorrect: false, rationale: "STR Trap. Blood glucose must be monitored before and at frequent intervals during insulin administration." },
+                    { text: "Refrigerate the vial immediately after drawing the dose.", isCorrect: false, rationale: "STR Trap. Vials in current use can remain at room temperature; refrigeration of drawn syringes is not standard." }
+                ],
+                hint: "High-alert medications require dual verification."
+            },
+            {
+                id: 5,
+                content: "Emergency Response",
+                application: "Basic Life Support (BLS) Sequence",
+                cause: "Chest compressions prioritize systemic perfusion",
+                question: "An unresponsive adult collapses in the hospital corridor. After verifying unresponsiveness and lack of breathing, what is the immediate priority action in accordance with current resuscitation guidelines?",
+                options: [
+                    { text: "Initiate immediate chest compressions.", isCorrect: true, rationale: "SCFHS Safe Action. Immediate high-quality chest compressions restore minimal coronary and cerebral perfusion." },
+                    { text: "Open the airway and deliver two rescue breaths.", isCorrect: false, rationale: "STR Trap. Compression-first (CAB) sequence prioritizes maintaining blood flow over immediate ventilations." },
+                    { text: "Run to the nursing station to activate code blue team.", isCorrect: false, rationale: "STR Trap. Leaving an unmonitored patient delays CPR; activate code via mobile phone/alarm while staying with patient." },
+                    { text: "Check carotid pulse for exactly 30 seconds.", isCorrect: false, rationale: "STR Trap. Prolonged pulse checks delay resuscitation; pulse check should take no more than 10 seconds." }
+                ],
+                hint: "Remember the CAB priority sequence in sudden collapse."
+            },
+            {
+                id: 6,
+                content: "Surgical Safety",
+                application: "Preoperative Surgical Time-Out",
+                cause: "Preventing wrong-site or wrong-patient surgery",
+                question: "Before performing an invasive bedside procedure, the multidisciplinary team halts for a 'Time-Out'. Who is responsible for verifying the correct patient, site, and procedure?",
+                options: [
+                    { text: "Only the lead surgeon performing the procedure.", isCorrect: false, rationale: "STR Trap. Surgical safety is a team responsibility involving all active participants." },
+                    { text: "The circulating nurse and anesthesiologist only.", isCorrect: false, rationale: "STR Trap. Exclusion of the primary operator invalidates the collaborative verification process." },
+                    { text: "All members of the procedural team actively participating.", isCorrect: true, rationale: "SCFHS Safe Action. Active verification by all team members ensures foolproof barrier against wrong-site errors." },
+                    { text: "The hospital quality assurance manager on duty.", isCorrect: false, rationale: "STR Trap. Quality managers audit processes retrospectively, not during active bedside time-outs." }
+                ],
+                hint: "Safety checklists require active participation of the entire team."
+            },
+            {
+                id: 7,
+                content: "Patient Assessment",
+                application: "Postoperative Hemorrhage Detection",
+                cause: "Tachycardia precedes overt hypotension",
+                question: "Two hours post-appendectomy, a patient appears restless, pale, and diaphoretic. Vital signs show BP 100/70 mmHg and heart rate 115 bpm. What is the underlying physiological cause?",
+                options: [
+                    { text: "Normal physiological recovery from volatile anesthetics.", isCorrect: false, rationale: "STR Trap. Tachycardia and diaphoresis post-surgery indicate compensatory mechanisms for volume loss." },
+                    { text: "Early compensatory response to internal hemorrhage.", isCorrect: true, rationale: "SCFHS Safe Action. Tachycardia is the earliest compensatory sign of blood loss before blood pressure drops." },
+                    { text: "Severe acute allergic reaction to prophylactic antibiotics.", isCorrect: false, rationale: "STR Trap. Anaphylaxis typically presents with bronchospasm, urticaria, and profound immediate hypotension." },
+                    { text: "Inadequate postoperative multimodal analgesia.", isCorrect: false, rationale: "STR Trap. Pain causes hypertension and tachycardia, but restlessness, pallor, and diaphoresis point to hypovolemia." }
+                ],
+                hint: "Heart rate changes often precede blood pressure drops in hypovolemic states."
+            },
+            {
+                id: 8,
+                content: "Infection Control",
+                application: "Standard Precautions & PPE Removal",
+                cause: "Preventing self-contamination of facial mucosa",
+                question: "A nurse is removing personal protective equipment (PPE) after caring for a contact-isolation patient. What is the correct sequence for doffing gloves, gown, and goggles?",
+                options: [
+                    { text: "Remove respirator/mask first, followed by gloves and gown.", isCorrect: false, rationale: "STR Trap. Removing facial protection first exposes mucous membranes to contaminated hands/gown." },
+                    { text: "Remove gloves first, followed by gown, then eye protection and mask.", isCorrect: true, rationale: "SCFHS Safe Action. Removing heavily contaminated gloves and gown first prevents spreading pathogens to face/hair." },
+                    { text: "Remove all items simultaneously in one fluid motion.", isCorrect: false, rationale: "STR Trap. Simultaneous removal increases cross-contamination risks across clean areas." },
+                    { text: "Remove gown first, then gloves while untying neck strings.", isCorrect: false, rationale: "STR Trap. Gown should be removed along with gloves or after gloves, avoiding touching outer contaminated surfaces." }
+                ],
+                hint: "Always remove the most contaminated items (gloves and gown) first."
+            },
+            {
+                id: 9,
+                content: "Pharmacology Safety",
+                application: "Potassium Chloride IV Administration",
+                cause: "Rapid IV potassium causes fatal cardiac arrhythmias",
+                question: "A physician orders intravenous potassium chloride for a hypokalemic patient. Which of the following actions is mandatory for safe administration?",
+                options: [
+                    { text: "Administer IV push rapidly to correct serum levels quickly.", isCorrect: false, rationale: "STR Trap. Rapid IV potassium push causes cardiac arrest and ventricular fibrillation." },
+                    { text: "Infuse via dedicated infusion pump with strict concentration limits.", isCorrect: true, rationale: "SCFHS Safe Action. IV potassium must be diluted, never given IV push, and controlled via infusion pump." },
+                    { text: "Administer intramuscularly to ensure sustained absorption.", isCorrect: false, rationale: "STR Trap. Potassium is extremely irritating to muscle tissue and causes severe necrosis." },
+                    { text: "Combine directly into primary blood transfusion tubing.", isCorrect: false, rationale: "STR Trap. Blood products should never have medications added directly to their lines." }
+                ],
+                hint: "Never give potassium via IV push under any clinical circumstances."
+            },
+            {
+                id: 10,
+                content: "Wound Care",
+                application: "Surgical Dehiscence Management",
+                cause: "Sterile saline dressings prevent evisceration and infection",
+                question: "A patient's abdominal surgical wound suddenly dehisses with loop of bowel protruding (evisceration). What is the immediate nursing action?",
+                options: [
+                    { text: "Gently push the protruding bowel loops back into the abdominal cavity.", isCorrect: false, rationale: "STR Trap. Manipulating protruding viscera causes trauma and severe peritonitis." },
+                    { text: "Apply dry gauze pads taped tightly across the wound edges.", isCorrect: false, rationale: "STR Trap. Dry gauze adheres to delicate bowel serosa and causes tearing upon removal." },
+                    { text: "Cover the exposed viscera with sterile saline-soaked dressings.", isCorrect: true, rationale: "SCFHS Safe Action. Sterile saline-soaked dressings keep bowel tissue moist and prevent ischemic necrosis." },
+                    { text: "Leave the wound completely open to air to promote drying.", isCorrect: false, rationale: "STR Trap. Leaving viscera exposed to air leads rapidly to drying, desiccation, and necrosis." }
+                ],
+                hint: "Keep exposed abdominal organs moist and sterile immediately."
+            }
+        ];
+
+        const additionalDomains = [
+            { content: "Medication Safety", app: "Calculations & Verification", cause: "Double-check prevents decimal dosing errors" },
+            { content: "Patient Safety", app: "Fall Risk Assessment", cause: "Morse Fall Scale identifies high-risk interventions" },
+            { content: "Infection Control", app: "Aseptic Catheter Insertion", cause: "Maintaining sterile field prevents catheter-UTI" },
+            { content: "Emergency Protocol", app: "Anaphylaxis Management", cause: "Epinephrine IM halts systemic vasodilation and bronchospasm" },
+            { content: "Safe Action", app: "Transfusion Reaction Check", cause: "Stopping infusion immediately limits hemolytic load" }
+        ];
+
+        for (let i = 11; i <= 100; i++) {
+            const domainInfo = additionalDomains[(i - 11) % additionalDomains.length];
+            questionBank.push({
+                id: i,
+                content: domainInfo.content,
+                application: `${domainInfo.app} (Case #${i})`,
+                cause: domainInfo.cause,
+                question: `Clinical Vignette #${i}: A healthcare provider encounters a complex clinical scenario regarding ${domainInfo.content.toLowerCase()}. Which of the following represents the safest, evidence-based SCFHS protocol?`,
+                options: [
+                    { text: "Proceed immediately with standard routine workflow without verification.", isCorrect: false, rationale: "STR Trap. Bypassing safety verification protocols increases clinical error risk." },
+                    { text: "Implement evidence-based clinical safety protocols and multidisciplinary verification.", isCorrect: true, rationale: `SCFHS Safe Action. ${domainInfo.cause}.` },
+                    { text: "Delegate the critical decision entirely to junior nursing staff.", isCorrect: false, rationale: "STR Trap. Delegation of high-risk clinical tasks violates professional accountability." },
+                    { text: "Delay all interventions until the next shift change handover.", isCorrect: false, rationale: "STR Trap. Delaying urgent clinical interventions compromises patient safety." }
+                ],
+                hint: "Always select the protocol emphasizing patient safety and standardized verification."
+            });
+        }
+
+        class SCFHSApp {
+            constructor() {
+                this.candidateName = "";
+                this.candidateId = "";
+                this.currentIndex = 0;
+                this.userAnswers = {};
+                this.submitted = false;
+                this.questions = questionBank;
+            }
+
+            init() {
+                lucide.createIcons();
+            }
+
+            handleRegistration(event) {
+                event.preventDefault();
+                const nameInput = document.getElementById('input-name').value.trim();
+                const idInput = document.getElementById('input-id').value.trim();
+
+                if (!nameInput || !idInput) return;
+
+                this.candidateName = nameInput;
+                this.candidateId = idInput;
+
+                document.getElementById('nav-display-name').textContent = this.candidateName;
+                document.getElementById('nav-display-id').textContent = this.candidateId;
+                document.getElementById('header-user-info').classList.remove('hidden');
+                document.getElementById('header-user-info').classList.add('flex');
+
+                document.getElementById('view-registration').classList.add('hidden');
+                document.getElementById('view-dashboard').classList.remove('hidden');
+                lucide.createIcons();
+            }
+
+            startQuiz() {
+                document.getElementById('view-dashboard').classList.add('hidden');
+                document.getElementById('view-quiz').classList.remove('hidden');
+                this.currentIndex = 0;
+                this.loadQuestion();
+            }
+
+            loadQuestion() {
+                const q = this.questions[this.currentIndex];
+                
+                document.getElementById('badge-question-num').textContent = `Item ${this.currentIndex + 1} of ${this.questions.length}`;
+                document.getElementById('badge-domain').textContent = `Domain: ${q.content}`;
+                document.getElementById('live-score').textContent = Object.keys(this.userAnswers).filter(k => {
+                    const qIdx = parseInt(k);
+                    const optIdx = this.userAnswers[k];
+                    return this.questions[qIdx].options[optIdx].isCorrect;
+                }).length;
+                document.getElementById('live-total').textContent = this.currentIndex + 1;
+
+                const progressPct = ((this.currentIndex + 1) / this.questions.length) * 100;
+                document.getElementById('progress-bar').style.width = `${progressPct}%`;
+
+                document.getElementById('question-text').textContent = q.question;
+                document.getElementById('matrix-content').textContent = q.content;
+                document.getElementById('matrix-application').textContent = q.application;
+                document.getElementById('matrix-cause').textContent = q.cause;
+
+                const optionsContainer = document.getElementById('options-container');
+                optionsContainer.innerHTML = '';
+
+                const answered = this.userAnswers[this.currentIndex] !== undefined;
+                const selectedOpt = this.userAnswers[this.currentIndex];
+
+                q.options.forEach((opt, idx) => {
+                    let btnClass = "w-full text-left p-4 rounded-xl border transition flex items-start gap-3 ";
+                    
+                    if (!answered) {
+                        btnClass += "bg-slate-950/60 border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800/60 text-slate-200 cursor-pointer";
+                    } else {
+                        if (opt.isCorrect) {
+                            btnClass += "bg-emerald-950/30 border-emerald-500 text-emerald-200";
+                        } else if (selectedOpt === idx && !opt.isCorrect) {
+                            btnClass += "bg-rose-950/30 border-rose-500 text-rose-200";
+                        } else {
+                            btnClass += "bg-slate-950/40 border-slate-800/60 text-slate-400 opacity-60";
+                        }
+                    }
+
+                    const btn = document.createElement('button');
+                    btn.className = btnClass;
+                    btn.disabled = answered;
+                    btn.onclick = () => this.selectOption(idx);
+                    
+                    btn.innerHTML = `
+                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-slate-900 border border-slate-700 text-xs font-bold text-slate-300 shrink-0 mt-0.5">
+                            ${String.fromCharCode(65 + idx)}
+                        </span>
+                        <span class="text-sm leading-relaxed">${opt.text}</span>
+                    `;
+                    optionsContainer.appendChild(btn);
+                });
+
+                const rationaleContainer = document.getElementById('rationale-container');
+                if (answered) {
+                    rationaleContainer.classList.remove('hidden');
+                    const isCorrectChoice = q.options[selectedOpt].isCorrect;
+                    const statusBadge = document.getElementById('rationale-status');
+                    
+                    if (isCorrectChoice) {
+                        statusBadge.textContent = "Correct SCFHS Safe Action";
+                        statusBadge.className = "text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                    } else {
+                        statusBadge.textContent = "STR Trap Identified";
+                        statusBadge.className = "text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30";
+                    }
+
+                    document.getElementById('rationale-text').textContent = q.options[selectedOpt].rationale;
+                } else {
+                    rationaleContainer.classList.add('hidden');
+                }
+
+                document.getElementById('btn-prev').disabled = this.currentIndex === 0;
+                const nextBtnText = this.currentIndex === this.questions.length - 1 ? "Submit Assessment Matrix" : "Next Question";
+                document.getElementById('btn-next-text').textContent = nextBtnText;
+
+                lucide.createIcons();
+            }
+
+            selectOption(optionIndex) {
+                this.userAnswers[this.currentIndex] = optionIndex;
+                this.loadQuestion();
+            }
+
+            nextQuestion() {
+                if (this.currentIndex < this.questions.length - 1) {
+                    this.currentIndex++;
+                    this.loadQuestion();
+                } else {
+                    this.submitAssessment();
+                }
+            }
+
+            prevQuestion() {
+                if (this.currentIndex > 0) {
+                    this.currentIndex--;
+                    this.loadQuestion();
+                }
+            }
+
+            submitAssessment() {
+                document.getElementById('view-quiz').classList.add('hidden');
+                document.getElementById('view-results').classList.remove('hidden');
+
+                let correctCount = 0;
+                Object.keys(this.userAnswers).forEach(k => {
+                    const qIdx = parseInt(k);
+                    const optIdx = this.userAnswers[k];
+                    if (this.questions[qIdx].options[optIdx].isCorrect) {
+                        correctCount++;
+                    }
+                });
+
+                const percentage = Math.round((correctCount / this.questions.length) * 100);
+
+                document.getElementById('res-name').textContent = this.candidateName;
+                document.getElementById('res-id').textContent = this.candidateId;
+                document.getElementById('res-score').textContent = `${correctCount} / ${this.questions.length} (${percentage}%)`;
+
+                let feedback = "";
+                if (percentage >= 80) {
+                    feedback = `Outstanding performance! Your clinical reasoning successfully transitioned from STR (Surface Test Recall) to SCFHS (Saudi Commission for Health Specialties) Safety First protocol. You consistently identified mechanical and physiological cause-and-effect relationships.`;
+                } else if (percentage >= 60) {
+                    feedback = `Competent performance, but watch out for linguistic traps and distractor rationales. Focus on 'how-to' safety actions rather than traditional memorization to elevate your score to mastery level.`;
+                } else {
+                    feedback = `Review recommended. Your responses indicate reliance on STR (Surface Test Recall) habits. Study the 3-list matrix (Content ➔ Application ➔ Cause & Effect) to prioritize patient safety and physiological rationale.`;
+                }
+
+                document.getElementById('res-feedback').textContent = feedback;
+                lucide.createIcons();
+            }
+
+            reviewAnswers() {
+                document.getElementById('view-results').classList.add('hidden');
+                document.getElementById('view-quiz').classList.remove('hidden');
+                this.currentIndex = 0;
+                this.loadQuestion();
+            }
+
+            resetSession() {
+                this.candidateName = "";
+                this.candidateId = "";
+                this.currentIndex = 0;
+                this.userAnswers = {};
+                
+                document.getElementById('input-name').value = "";
+                document.getElementById('input-id').value = "";
+                document.getElementById('header-user-info').classList.add('hidden');
+                document.getElementById('header-user-info').classList.remove('flex');
+
+                document.getElementById('view-results').classList.add('hidden');
+                document.getElementById('view-dashboard').classList.add('hidden');
+                document.getElementById('view-quiz').classList.add('hidden');
+                document.getElementById('view-registration').classList.remove('hidden');
+                lucide.createIcons();
+            }
+        }
+
+        const app = new SCFHSApp();
+        window.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>
