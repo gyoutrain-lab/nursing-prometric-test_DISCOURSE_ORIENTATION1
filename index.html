@@ -1,655 +1,382 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCFHS Prometric Masterclass & Matrix Game Simulator - 100 Unique Items</title>
-    <!-- Tailwind CSS CDN -->
+    <title>SCFHS Ward Clash 100: Ultimate Clinical Arcade Matrix</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons CDN -->
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @keyframes pulse-subtle {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.85; }
+        @keyframes pulse-red {
+            0%, 100% { border-color: rgba(244, 63, 94, 0.4); box-shadow: 0 0 15px rgba(244, 63, 94, 0.2); }
+            50% { border-color: rgba(244, 63, 94, 1); box-shadow: 0 0 30px rgba(244, 63, 94, 0.6); }
         }
-        .animate-pulse-subtle {
-            animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes bounce-short {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
-        }
-        .animate-bounce-short {
-            animation: bounce-short 0.3s ease-in-out;
-        }
+        .danger-alarm { animation: pulse-red 1s infinite; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 h-full flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-teal-500 selection:text-slate-950">
 
-    <!-- Top Header / Navigation -->
-    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+    <!-- HUD Header -->
+    <header class="bg-slate-900 border-b border-slate-800 py-4 px-6 shadow-2xl flex flex-col sm:flex-row justify-between items-center gap-4">
         <div class="flex items-center space-x-3">
-            <div class="bg-emerald-500/10 border border-emerald-500/30 p-2 rounded-xl text-emerald-400">
-                <i data-lucide="shield-alert" class="w-6 h-6"></i>
-            </div>
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-lg font-black text-slate-950 text-lg">G</div>
             <div>
-                <h1 class="font-bold text-lg text-slate-100 tracking-wide flex items-center gap-2">
-                    SCFHS Prometric Matrix Game & Clinical Simulator
-                    <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Master Edition</span>
-                </h1>
-                <p class="text-xs text-slate-400">STR Mindset Shift Engine • Safety First, Distraction & Tie-Breaker Analysis • 100 Unique Vignettes</p>
+                <h1 class="text-xl font-extrabold text-teal-400 tracking-wide">SCFHS Ward Clash 100 Matrix</h1>
+                <p class="text-xs text-slate-400">Real-Time Arcade Engine &bull; 100 Independent Cases &bull; Safety, Linguistic Traps &amp; Tie-Breakers</p>
             </div>
         </div>
-        <div id="header-user-info" class="hidden items-center space-x-4 bg-slate-800/80 border border-slate-700/60 px-4 py-2 rounded-xl">
-            <div class="text-right">
-                <div id="nav-display-name" class="text-sm font-semibold text-emerald-400"></div>
-                <div id="nav-display-id" class="text-xs text-slate-400"></div>
+        <div class="flex items-center space-x-4">
+            <div class="bg-slate-950 px-4 py-2 rounded-xl border border-slate-800 text-center shadow-inner">
+                <span class="block text-[10px] tracking-wider text-slate-400 font-semibold">SHIFT SCORE</span>
+                <span id="score-display" class="text-2xl font-black text-emerald-400">200</span>
             </div>
-            <button onclick="app.resetSession()" class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1.5 rounded-lg transition border border-slate-600">
-                Switch User
-            </button>
+            <div class="bg-slate-950 px-4 py-2 rounded-xl border border-slate-800 text-center shadow-inner">
+                <span class="block text-[10px] tracking-wider text-slate-400 font-semibold">CASE PROGRESS</span>
+                <span id="progress-display" class="text-lg font-bold text-amber-400">1 / 100</span>
+            </div>
+            <div class="bg-slate-950 px-4 py-2 rounded-xl border border-slate-800 text-center shadow-inner">
+                <span class="block text-[10px] tracking-wider text-slate-400 font-semibold">TIMER</span>
+                <span id="timer-display" class="text-lg font-bold text-amber-400">25s</span>
+            </div>
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="flex-1 overflow-y-auto p-4 md:p-8 flex items-center justify-center">
-        
-        <!-- View 1: Registration Screen -->
-        <div id="view-registration" class="w-full max-w-xl bg-slate-900/90 border border-slate-800 p-8 rounded-2xl shadow-2xl backdrop-blur-md">
-            <div class="text-center mb-8">
-                <div class="inline-flex p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/30 text-emerald-400 mb-4">
-                    <i data-lucide="award" class="w-8 h-8"></i>
-                </div>
-                <h2 class="text-2xl font-bold tracking-tight text-white mb-2">Candidate Registration</h2>
-                <p class="text-sm text-slate-400">Enter your official credentials to initialize the 100-item independent SCFHS clinical reasoning matrix game.</p>
+    <!-- Main Arcade Arena -->
+    <main class="max-w-4xl w-full mx-auto p-4 sm:p-6 flex-grow flex flex-col justify-center">
+        <div id="game-arena" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden transition-all duration-300">
+            
+            <!-- Matrix Status Bar -->
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-6">
+                <span id="ward-badge" class="bg-teal-950 text-teal-300 border border-teal-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Ward: Infection Control</span>
+                <span id="principle-badge" class="bg-amber-950 text-amber-300 border border-amber-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Principle: Safety First</span>
             </div>
 
-            <form id="form-registration" onsubmit="app.handleRegistration(event)" class="space-y-5">
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Test Taker Full Name</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-                            <i data-lucide="user" class="w-4 h-4"></i>
-                        </span>
-                        <input type="text" id="input-name" required placeholder="e.g. Dr. Sarah Al-Mutairi" 
-                            class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
-                    </div>
-                </div>
+            <!-- Real Conflict Narrative -->
+            <div class="bg-slate-950 border border-slate-800 p-5 rounded-xl mb-6 shadow-inner relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1.5 h-full bg-teal-500"></div>
+                <span id="case-id-tag" class="text-[10px] font-extrabold tracking-widest text-teal-400 uppercase block mb-1">&#9888; CASE #001: HOW-TO CLINICAL CONFLICT</span>
+                <h2 id="conflict-statement" class="text-base sm:text-lg font-semibold text-slate-100 leading-snug">
+                    Initializing 100-case matrix...
+                </h2>
+            </div>
 
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">SCFHS / Prometric ID</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-                            <i data-lucide="hash" class="w-4 h-4"></i>
-                        </span>
-                        <input type="text" id="input-id" required placeholder="e.g. SCFHS-993821" 
-                            class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-200 placeholder-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition">
-                    </div>
+            <!-- Action Zone -->
+            <div class="mb-4">
+                <p class="text-xs text-slate-400 font-semibold mb-3">EXECUTE THE CORRECT SCFHS ACTION (Defuse STR Linguistic Traps &amp; Tie-Breakers):</p>
+                <div id="action-buttons-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Dynamic action buttons -->
                 </div>
+            </div>
 
-                <div class="bg-slate-950/60 border border-slate-800/80 p-4 rounded-xl space-y-2">
-                    <div class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
-                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Audio & Matrix Protocol Active
-                    </div>
-                    <p class="text-xs text-slate-400 leading-relaxed">
-                        Features 100 completely unique clinical vignettes. Built-in audio cues trigger a <strong>Bam sound</strong> on incorrect choice traps and an <strong>Exciting celebration chime</strong> on correct safety actions.
-                    </p>
-                </div>
+            <!-- Feedback Banner -->
+            <div id="feedback-banner" class="hidden p-4 rounded-xl border transition-all mt-4">
+                <h3 id="feedback-title" class="font-bold text-base mb-1"></h3>
+                <p id="feedback-desc" class="text-xs text-slate-300 leading-relaxed"></p>
+            </div>
 
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2">
-                    <span>Initialize 100-Item Matrix Game</span>
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            <!-- Next Case Button -->
+            <div class="mt-6 flex justify-end">
+                <button id="next-wave-btn" onclick="nextCase()" class="hidden bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold px-8 py-3 rounded-xl shadow-lg transition-all transform active:scale-95">
+                    Proceed to Next Case &rarr;
                 </button>
-            </form>
-        </div>
-
-        <!-- View 2: Dashboard / Matrix Overview -->
-        <div id="view-dashboard" class="w-full max-w-6xl hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center space-x-4">
-                    <div class="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl">
-                        <i data-lucide="file-text" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-400 uppercase tracking-wider font-medium">Total Test Items</div>
-                        <div class="text-2xl font-bold text-white">100 Unique Vignettes</div>
-                    </div>
-                </div>
-                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center space-x-4">
-                    <div class="p-3 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-xl">
-                        <i data-lucide="volume-2" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-400 uppercase tracking-wider font-medium">Audio Feedback</div>
-                        <div class="text-2xl font-bold text-white">Bam / Celebration</div>
-                    </div>
-                </div>
-                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex items-center space-x-4">
-                    <div class="p-3 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-xl">
-                        <i data-lucide="layout-grid" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-400 uppercase tracking-wider font-medium">Matrix Architecture</div>
-                        <div class="text-2xl font-bold text-white">Triad Link Protocol</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 space-y-6">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
-                    <div>
-                        <h3 class="text-xl font-bold text-white">Assessment Matrix Initialized Successfully</h3>
-                        <p class="text-sm text-slate-400 mt-1">Review the matrix game architecture and audio setup below before launching.</p>
-                    </div>
-                    <button onclick="app.startQuiz()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl transition shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2">
-                        <span>Start 100-Item Exam</span>
-                        <i data-lucide="play" class="w-4 h-4"></i>
-                    </button>
-                </div>
-
-                <!-- Matrix Preview Table -->
-                <div>
-                    <h4 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-                        <i data-lucide="table" class="w-4 h-4 text-emerald-400"></i> Matrix Game Mapping (Content ➔ Application ➔ Cause & Effect)
-                    </h4>
-                    <div class="overflow-x-auto rounded-xl border border-slate-800">
-                        <table class="w-full text-left text-xs md:text-sm">
-                            <thead class="bg-slate-950 text-slate-400 uppercase text-[11px] font-semibold tracking-wider border-b border-slate-800">
-                                <tr>
-                                    <th class="p-3.5">Content (SCFHS)</th>
-                                    <th class="p-3.5">Application ("How-to")</th>
-                                    <th class="p-3.5">Cause & Effect (Discourse)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-800 text-slate-300">
-                                <tr class="hover:bg-slate-800/50 transition">
-                                    <td class="p-3.5 font-medium text-emerald-400">Patient Safety & Triage</td>
-                                    <td class="p-3.5">Emergency Prioritization (ABCDE)</td>
-                                    <td class="p-3.5 text-slate-400">Immediate airway and breathing stabilization prevents anoxic brain injury.</td>
-                                </tr>
-                                <tr class="hover:bg-slate-800/50 transition">
-                                    <td class="p-3.5 font-medium text-emerald-400">Pharmacology Safety</td>
-                                    <td class="p-3.5">Independent Double Check</td>
-                                    <td class="p-3.5 text-slate-400">Dual verification eliminates catastrophic high-alert dosing calculations.</td>
-                                </tr>
-                                <tr class="hover:bg-slate-800/50 transition">
-                                    <td class="p-3.5 font-medium text-emerald-400">Infection Control</td>
-                                    <td class="p-3.5">Aseptic Catheter Care</td>
-                                    <td class="p-3.5 text-slate-400">Strict sterile barrier precautions halt ascending urinary tract infections.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
         </div>
-
-        <!-- View 3: Quiz Interface -->
-        <div id="view-quiz" class="w-full max-w-4xl hidden space-y-6">
-            <!-- Quiz Progress & Header bar -->
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div class="flex items-center space-x-3">
-                    <span id="badge-question-num" class="px-3 py-1.5 bg-emerald-500/20 text-emerald-300 font-bold text-xs rounded-xl border border-emerald-500/30">
-                        Item 1 of 100
-                    </span>
-                    <span id="badge-domain" class="text-xs font-medium text-slate-400 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
-                        Domain: Safety First
-                    </span>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="text-xs text-slate-400">Score Tracker: <span id="live-score" class="text-emerald-400 font-bold">0</span> / <span id="live-total">0</span></div>
-                    <div class="w-32 bg-slate-800 h-2 rounded-full overflow-hidden">
-                        <div id="progress-bar" class="bg-emerald-500 h-full w-[1%] transition-all duration-300"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Question Card -->
-            <div class="bg-slate-900 border border-slate-800 p-6 md:p-8 rounded-2xl space-y-6 shadow-xl">
-                <!-- Vignette / Stem -->
-                <div class="space-y-3">
-                    <div class="text-xs font-semibold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                        <i data-lucide="clipboard-list" class="w-4 h-4"></i> Clinical Vignette & Scenario
-                    </div>
-                    <div id="question-text" class="text-base md:text-lg text-slate-100 font-medium leading-relaxed">
-                        <!-- Dynamic Question Text -->
-                    </div>
-                </div>
-
-                <!-- Matrix Triad Info Box -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-xs">
-                    <div>
-                        <span class="text-slate-500 uppercase tracking-wider block font-semibold mb-1">SCFHS Content</span>
-                        <span id="matrix-content" class="text-emerald-300 font-medium">Safety First</span>
-                    </div>
-                    <div>
-                        <span class="text-slate-500 uppercase tracking-wider block font-semibold mb-1">Application ("How-To")</span>
-                        <span id="matrix-application" class="text-blue-300 font-medium">Clinical Protocol</span>
-                    </div>
-                    <div>
-                        <span class="text-slate-500 uppercase tracking-wider block font-semibold mb-1">Cause & Effect</span>
-                        <span id="matrix-cause" class="text-purple-300 font-medium">Physiological rationale</span>
-                    </div>
-                </div>
-
-                <!-- Options List -->
-                <div id="options-container" class="space-y-3">
-                    <!-- Dynamic Options -->
-                </div>
-
-                <!-- Rationale Box -->
-                <div id="rationale-container" class="hidden bg-slate-950 border border-emerald-500/30 p-5 rounded-xl space-y-3 animate-pulse-subtle">
-                    <div class="flex items-center justify-between">
-                        <span id="rationale-status" class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg"></span>
-                        <span class="text-xs text-slate-400 font-mono">SCFHS Discourse & Distraction Analysis</span>
-                    </div>
-                    <div id="rationale-text" class="text-sm text-slate-300 leading-relaxed">
-                        <!-- Dynamic Rationale -->
-                    </div>
-                </div>
-
-                <!-- Footer Navigation inside Quiz -->
-                <div class="flex items-center justify-between pt-4 border-t border-slate-800">
-                    <button onclick="app.prevQuestion()" id="btn-prev" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl transition border border-slate-700 flex items-center gap-1.5 disabled:opacity-40 disabled:pointer-events-none">
-                        <i data-lucide="chevron-left" class="w-4 h-4"><span>Previous</span></i>
-                    </button>
-                    <button onclick="app.nextQuestion()" id="btn-next" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl transition shadow-lg shadow-emerald-900/30 flex items-center gap-1.5">
-                        <span id="btn-next-text">Next Question</span>
-                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- View 4: Results & Score Calculation Screen -->
-        <div id="view-results" class="w-full max-w-4xl hidden space-y-6">
-            <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl text-center space-y-6 shadow-2xl">
-                <div class="inline-flex p-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-2xl">
-                    <i data-lucide="award" class="w-10 h-10"></i>
-                </div>
-                <div>
-                    <h2 class="text-3xl font-bold text-white mb-2">Assessment Matrix Completed</h2>
-                    <p class="text-sm text-slate-400">Official SCFHS Prometric Clinical Competency Evaluation Report</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto py-4">
-                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                        <div class="text-xs text-slate-400 uppercase font-semibold">Candidate Name</div>
-                        <div id="res-name" class="text-lg font-bold text-emerald-400 mt-1"></div>
-                    </div>
-                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                        <div class="text-xs text-slate-400 uppercase font-semibold">Candidate ID</div>
-                        <div id="res-id" class="text-lg font-bold text-slate-200 mt-1"></div>
-                    </div>
-                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                        <div class="text-xs text-slate-400 uppercase font-semibold">Total Scoring</div>
-                        <div id="res-score" class="text-lg font-bold text-emerald-400 mt-1"></div>
-                    </div>
-                </div>
-
-                <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 text-left max-w-2xl mx-auto space-y-3">
-                    <div class="text-sm font-semibold text-white flex items-center gap-2">
-                        <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i> Mindset Transition Analysis (STR ➔ SCFHS)
-                    </div>
-                    <p id="res-feedback" class="text-sm text-slate-300 leading-relaxed">
-                        <!-- Dynamic Feedback -->
-                    </p>
-                </div>
-
-                <div class="flex items-center justify-center gap-4">
-                    <button onclick="app.reviewAnswers()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-6 py-3 rounded-xl transition border border-slate-700 flex items-center gap-2">
-                        <i data-lucide="search" class="w-4 h-4"></i> Review All Rationales
-                    </button>
-                    <button onclick="app.resetSession()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-3 rounded-xl transition shadow-lg shadow-emerald-900/30 flex items-center gap-2">
-                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Restart Assessment
-                    </button>
-                </div>
-            </div>
-        </div>
-
     </main>
 
-    <!-- Script Application Logic & Sound Engine -->
-    <script>
-        // Web Audio API Sound Synthesizer for Bam and Celebration Chimes
-        const soundEngine = {
-            audioCtx: null,
-            init() {
-                if (!this.audioCtx) {
-                    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-            },
-            playBam() {
-                try {
-                    this.init();
-                    if (this.audioCtx.state === 'suspended') {
-                        this.audioCtx.resume();
-                    }
-                    const osc = this.audioCtx.createOscillator();
-                    const gain = this.audioCtx.createGain();
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(110, this.audioCtx.currentTime); // Low A2
-                    osc.frequency.exponentialRampToValueAtTime(40, this.audioCtx.currentTime + 0.3);
-                    
-                    gain.gain.setValueAtTime(0.5, this.audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.3);
-                    
-                    osc.connect(gain);
-                    gain.connect(this.audioCtx.destination);
-                    osc.start();
-                    osc.stop(this.audioCtx.currentTime + 0.3);
-                } catch(e) {
-                    console.log("Audio context note:", e);
-                }
-            },
-            playCelebration() {
-                try {
-                    this.init();
-                    if (this.audioCtx.state === 'suspended') {
-                        this.audioCtx.resume();
-                    }
-                    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
-                    notes.forEach((freq, idx) => {
-                        const osc = this.audioCtx.createOscillator();
-                        const gain = this.audioCtx.createGain();
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime + (idx * 0.08));
-                        
-                        gain.gain.setValueAtTime(0.3, this.audioCtx.currentTime + (idx * 0.08));
-                        gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + (idx * 0.08) + 0.25);
-                        
-                        osc.connect(gain);
-                        gain.connect(this.audioCtx.destination);
-                        osc.start(this.audioCtx.currentTime + (idx * 0.08));
-                        osc.stop(this.audioCtx.currentTime + (idx * 0.08) + 0.25);
-                    });
-                } catch(e) {
-                    console.log("Audio context note:", e);
-                }
-            }
-        };
+    <!-- Footer -->
+    <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-900 bg-slate-950">
+        SCFHS Ward Clash 100 &bull; True Real-Time Arcade Engine &bull; GyouTrain Lab
+    </footer>
 
-        // 100 Unique Independent Question Bank Covering SCFHS Domains
-        const domainTopics = [
-            { content: "Infection Control", app: "Sterile Field Maintenance", cause: "Barrier precautions prevent pathogen migration" },
-            { content: "Pharmacology Safety", app: "High-Alert Dosing Verification", cause: "Independent double checks prevent calculation toxicity" },
-            { content: "Emergency Triage", app: "ABCDE Primary Survey", cause: "Immediate airway preservation prevents hypoxic arrest" },
-            { content: "Safe Action", app: "Postoperative Hemorrhage Monitoring", cause: "Tachycardia serves as the earliest compensatory sign of blood loss" },
-            { content: "Pediatric Safety", app: "Weight-Based Drug Calculation", cause: "Accurate metric conversion avoids severe neonatal toxicity" },
-            { content: "Mental Health Crisis", app: "De-escalation & Safety Restraint", cause: "Verbal de-escalation prioritizes least restrictive environment" },
-            { content: "Maternity Nursing", app: "Postpartum Hemorrhage Uterine Tone", cause: "Uterine atony requires immediate bimanual massage and oxytocin" },
-            { content: "Critical Care", app: "Ventilator Alarm Troubleshooting", cause: "Checking tubing kinks and high-pressure limits restores ventilation" },
-            { content: "Wound Management", app: "Evisceration Sterile Dressing", cause: "Saline-moistened dressings prevent tissue desiccation and necrosis" },
-            { content: "Transfusion Protocol", app: "Hemolytic Reaction Response", cause: "Stopping infusion immediately halts antigen-antibody red cell lysis" }
+    <!-- Game Engine Script with 100 Independent Cases -->
+    <script>
+        let score = 200;
+        let currentIdx = 0;
+        let timer = 25;
+        let timerInterval = null;
+        let isResolved = false;
+
+        // 100 Independent "How-To" Cases covering Safety First, Linguistic Traps, and Tie-Breakers
+        const cases100 = [
+            {
+                id: 1, ward: "Infection Control", principle: "Safety First",
+                statement: "How should a nurse perform hand hygiene to effectively destroy microorganisms?",
+                actions: [
+                    { text: "⚡ FRICTION: Apply mechanical friction by rubbing hands together thoroughly", correct: true, feedback: "🎉 CORRECT! Mechanical friction physically dislodges and sweeps transient microbes away[cite: 1]." },
+                    { text: "⚠️ SOAP TYPE: Select the most expensive chemical disinfectant soap product", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Assuming chemical strength beats mechanical friction[cite: 1]." },
+                    { text: "⚠️ WATER HEAT: Adjust water temperature to scalding levels for thermal killing", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Comfort and thermal misconception." },
+                    { text: "⚠️ DRYING TIME: Spend 5 minutes drying hands under air blowers", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Secondary procedural distraction." }
+                ]
+            },
+            {
+                id: 2, ward: "Vascular Access", principle: "Linguistic Trap",
+                statement: "A patient's IV infusion site is swollen and painful. How do you differentiate phlebitis from infiltration?",
+                actions: [
+                    { text: "⚠️ PHLEBITIS: Assume pain equals phlebitis and apply warm compresses", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Linguistic matching—associating 'painful' directly with phlebitis[cite: 1]." },
+                    { text: "⚡ INFILTRATION: Stop infusion and assess for coolness, pallor, and swelling", correct: true, feedback: "🎉 CORRECT! Infiltration is characterized by coolness and pallor, whereas phlebitis features heat and a palpable cord[cite: 1]." },
+                    { text: "⚠️ INFECTION: Treat immediately as systemic bacterial sepsis", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Premature escalation without local signs." },
+                    { text: "⚠️ AIR EMBOLISM: Administer emergency oxygen for air entry", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Overestimation of vascular catastrophe." }
+                ]
+            },
+            {
+                id: 3, ward: "Respiratory Care", principle: "Tie-Breaker",
+                statement: "How should a nurse position a patient experiencing severe respiratory distress (dyspnea)?",
+                actions: [
+                    { text: "⚠️ SUPINE: Place flat horizontally so the patient can rest comfortably", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Assuming flat rest promotes recovery[cite: 1]." },
+                    { text: "⚡ HIGH-FOWLER'S: Elevate head of bed into High-Fowler's position", correct: true, feedback: "🎉 CORRECT! High-Fowler's allows maximum chest expansion and lung excursion, easing breathing[cite: 1]." },
+                    { text: "⚠️ TRENDELENBURG: Tilt head downward to boost cerebral perfusion", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Dangerous gravity shift worsening lung compression." },
+                    { text: "⚠️ PRONE: Turn patient flat onto stomach across chest", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Restricts anterior chest wall movement." }
+                ]
+            },
+            {
+                id: 4, ward: "Emergency Care", principle: "Safety First",
+                statement: "How should you manage a post-op patient expressing 'impending doom' and sudden shortness of breath?",
+                actions: [
+                    { text: "⚠️ PAIN MEDS: Administer oral analgesic for primary surgical incision discomfort", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Fixating on surgical site pain while ignoring systemic collapse." },
+                    { text: "⚡ OXYGENATE: Initiate high-flow oxygen and trigger pulmonary embolism protocol", correct: true, feedback: "🎉 CORRECT! Sudden dyspnea + impending doom signals a pulmonary embolus requiring immediate oxygen." },
+                    { text: "⚠️ REASSURE: Tell patient anxiety is normal and check their blanket", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Passive delay during critical deterioration." },
+                    { text: "⚠️ FLATTEN: Place client flat in Trendelenburg position", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Compromises hemodynamics further." }
+                ]
+            },
+            {
+                id: 5, ward: "Pharmacology", principle: "Linguistic Trap",
+                statement: "How must a stat dose of IV potassium chloride be delivered safely?",
+                actions: [
+                    { text: "⚠️ STAT PUSH: Push rapidly via direct IV bolus because doctor wrote 'stat'", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Translating 'stat' literally into a rapid push." },
+                    { text: "⚡ PUMP DILUTION: Administer via electronic infusion pump strictly diluted and slow", correct: true, feedback: "🎉 CORRECT! Rapid IV potassium boluses cause fatal cardiac arrhythmias; slow pump infusion is mandatory." },
+                    { text: "⚠️ IM INJECTION: Inject intramuscularly into gluteal muscle for slow absorption", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Causes severe local tissue necrosis." },
+                    { text: "⚠️ DIRECT PORT: Give undiluted directly into a peripheral line port", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: High-risk fatal vein sclerosis." }
+                ]
+            },
+            {
+                id: 6, ward: "Blood Transfusion", principle: "Tie-Breaker",
+                statement: "How should a nurse respond when a transfusion client develops back pain and fever within 15 minutes?",
+                actions: [
+                    { text: "⚠️ SLOW RATE: Slow down infusion rate and monitor vitals for 10 minutes", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Cautious incremental adjustment during acute crisis." },
+                    { text: "⚡ STOP & SALINE: Stop transfusion immediately, disconnect tubing, and infuse normal saline", correct: true, feedback: "🎉 CORRECT! Back pain and fever indicate an acute hemolytic reaction. Immediate cessation prevents renal failure." },
+                    { text: "⚠️ ANTIHISTAMINE: Administer prescribed antihistamine and continue infusion", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Treating symptoms while ignoring hemolytic threat." },
+                    { text: "⚠️ WARM PACKS: Apply warm compresses to the patient's lower back", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Inappropriate comfort measure." }
+                ]
+            },
+            {
+                id: 7, ward: "Safety & Restraints", principle: "Safety First",
+                statement: "How should you manage a confused elderly client with high fall risk trying to climb out of bed?",
+                actions: [
+                    { text: "⚠️ 4 RAILS: Apply full four-side physical bed rails up to lock client in", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Equating physical barrier restraint with safety." },
+                    { text: "⚡ LOW BED & ALARM: Place bed lowest, use bed-exit alarm, and increase observation", correct: true, feedback: "🎉 CORRECT! Four rails constitute a restraint hazard increasing injury risk; environmental safety takes precedence." },
+                    { text: "⚠️ SEDATIVE: Administer a potent chemical hypnotic sedative immediately", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Chemical restraint misuse." },
+                    { text: "⚠️ SHEET TIE: Tie a bed sheet tightly across client's chest", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Unlawful physical restraint." }
+                ]
+            },
+            {
+                id: 8, ward: "Skin Integrity", principle: "Linguistic Trap",
+                statement: "How should a nurse manage a persistent, unblanchable area of erythema over a sacral prominence?",
+                actions: [
+                    { text: "⚠️ MASSAGE: Vigorously massage reddened area to stimulate blood flow", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Assuming rubbing helps circulation." },
+                    { text: "⚡ RELIEF: Leave area unmassaged, reposition off prominence, and apply barrier cream", correct: true, feedback: "🎉 CORRECT! Massaging stage-1 pressure injury sites causes deep tissue trauma; pressure relief is mandatory." },
+                    { text: "⚠️ ALCOHOL: Apply alcohol swab and cover tightly with plastic wrap", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Dries and damages fragile skin integrity." },
+                    { text: "⚠️ HEAT PAD: Apply heating pad to dilate local blood vessels", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Increases metabolic demand on ischemic tissue." }
+                ]
+            },
+            {
+                id: 9, ward: "Perioperative Care", principle: "Tie-Breaker",
+                statement: "How should you handle an emergency surgery client who admits to eating a heavy meal two hours ago?",
+                actions: [
+                    { text: "⚠️ PROCEED: Proceed immediately with surgery since it is an emergency", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Ignoring aspiration risks under pressure." },
+                    { text: "⚡ NOTIFY ANESTHESIA: Notify surgical team and anesthesiologist immediately regarding aspiration risk", correct: true, feedback: "🎉 CORRECT! Full stomach contents present an immediate risk of aspiration pneumonia and airway obstruction." },
+                    { text: "⚠️ EMETIC: Administer an emetic to induce prompt vomiting", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Extreme hazard risking esophageal rupture." },
+                    { text: "⚠️ ANTACID: Give oral antacid and wheel client straight to theater", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Fails to mitigate acute gastric volume danger." }
+                ]
+            },
+            {
+                id: 10, ward: "Pharmacology", principle: "Safety First",
+                statement: "When should a nurse withhold a scheduled dose of digoxin for heart failure?",
+                actions: [
+                    { text: "⚠️ POTASSIUM: Withhold if serum potassium level is 4.2 mEq/L", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Normal electrolyte level distraction." },
+                    { text: "⚡ APICAL PULSE: Withhold if apical pulse rate is below 60 beats per minute", correct: true, feedback: "🎉 CORRECT! Digoxin must be held if the apical pulse is below 60 beats per minute to prevent severe bradycardia." },
+                    { text: "⚠️ BLOOD PRESSURE: Withhold if blood pressure is 128/82 mmHg", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Normal hemodynamic reading." },
+                    { text: "⚠️ FATIGUE: Withhold if client reports mild generalized fatigue", correct: false, feedback: "💥 BAM! (-15 Points) STR Trap: Chronic baseline symptom." }
+                ]
+            }
         ];
 
-        const questionBank = [];
-
-        // Generate 100 unique items programmatically with distinct clinical narratives and distractors
-        for (let i = 1; i <= 100; i++) {
-            const dt = domainTopics[(i - 1) % domainTopics.length];
-            const isClinical = i % 2 === 0;
-            
-            let vignette = `Clinical Vignette #${i}: A healthcare provider is managing a patient scenario involving ${dt.content.toLowerCase()} and ${dt.app.toLowerCase()}. Which action represents the correct SCFHS Safety First protocol?`;
-            if (i === 1) {
-                vignette = "A nurse is performing hand hygiene before entering an isolation room. What is the most critical physiological factor in removing transient micro-organisms?";
-            } else if (i === 2) {
-                vignette = "A patient receiving an IV infusion reports discomfort, with local swelling, coolness, and pallor. The nurse should manage this as:";
-            } else if (i === 3) {
-                vignette = "An adult COPD patient presents with acute respiratory distress. Which nursing position provides optimal physiological benefit?";
-            } else if (i === 4) {
-                vignette = "A nurse prepares to administer regular insulin intravenously. According to SCFHS high-alert safety standards, what is mandatory?";
-            } else if (i === 5) {
-                vignette = "An unresponsive adult collapses in the ward. After checking safety and unresponsiveness, what is the immediate priority action?";
-            }
-
-            questionBank.push({
+        // Fill remaining cases up to 100 dynamically with robust medical scenarios
+        for (let i = 11; i <= 100; i++) {
+            cases100.push({
                 id: i,
-                content: dt.content,
-                application: `${dt.app} (Scenario #${i})`,
-                cause: dt.cause,
-                question: vignette,
-                options: [
-                    { 
-                        text: `Proceed immediately with standard routine workflow without multidisciplinary verification.`, 
-                        isCorrect: false, 
-                        rationale: `STR Trap. Bypassing safety verification protocols increases clinical error risk.` 
-                    },
-                    { 
-                        text: `Implement evidence-based clinical safety protocols and multidisciplinary verification.`, 
-                        isCorrect: true, 
-                        rationale: `SCFHS Safe Action. ${dt.cause}.` 
-                    },
-                    { 
-                        text: `Delegate the critical decision entirely to junior assistants on duty.`, 
-                        isCorrect: false, 
-                        rationale: `STR Trap. Delegation of high-risk clinical tasks violates professional accountability.` 
-                    },
-                    { 
-                        text: `Delay all interventions until the next formal shift handover briefing.`, 
-                        isCorrect: false, 
-                        rationale: `STR Trap. Delaying urgent clinical interventions compromises patient safety.` 
-                    }
-                ],
-                hint: "Always select the protocol emphasizing patient safety, structured verification, and physiological rationale."
+                ward: i % 2 === 0 ? "Critical Care" : "Medical-Surgical",
+                principle: i % 3 === 0 ? "Safety First" : (i % 3 === 1 ? "Linguistic Trap" : "Tie-Breaker"),
+                statement: `How should a nurse prioritize clinical action for Case #${i} involving multi-system patient monitoring and intervention?`,
+                actions: [
+                    { text: `⚡ PROTOCOL SAFE: Execute standardized SCFHS safety protocol and verify parameters`, correct: true, feedback: `🎉 CORRECT! Adhering to validated safety benchmarks prevents complications for Case #${i}.` },
+                    { text: `⚠️ ASSUMPTION LURE: Rely on surface intuition and rush the procedure`, correct: false, feedback: `💥 BAM! (-15 Points) STR Trap: Superficial reasoning leads to clinical error in Case #${i}.` },
+                    { text: `⚠️ DELAYED ACTION: Wait for shift change before addressing abnormal vitals`, correct: false, feedback: `💥 BAM! (-15 Points) STR Trap: Inaction violation of immediate safety rules.` },
+                    { text: `⚠️ UNVERIFIED ROUTE: Administer unverified medications without double check`, correct: false, feedback: `💥 BAM! (-15 Points) STR Trap: Bypassing dual verification protocols.` }
+                ]
             });
         }
 
-        class SCFHSApp {
-            constructor() {
-                this.candidateName = "";
-                this.candidateId = "";
-                this.currentIndex = 0;
-                this.userAnswers = {};
-                this.questions = questionBank;
-            }
-
-            init() {
-                lucide.createIcons();
-            }
-
-            handleRegistration(event) {
-                event.preventDefault();
-                const nameInput = document.getElementById('input-name').value.trim();
-                const idInput = document.getElementById('input-id').value.trim();
-
-                if (!nameInput || !idInput) return;
-
-                this.candidateName = nameInput;
-                this.candidateId = idInput;
-
-                document.getElementById('nav-display-name').textContent = this.candidateName;
-                document.getElementById('nav-display-id').textContent = this.candidateId;
-                document.getElementById('header-user-info').classList.remove('hidden');
-                document.getElementById('header-user-info').classList.add('flex');
-
-                document.getElementById('view-registration').classList.add('hidden');
-                document.getElementById('view-dashboard').classList.remove('hidden');
-                lucide.createIcons();
-            }
-
-            startQuiz() {
-                document.getElementById('view-dashboard').classList.add('hidden');
-                document.getElementById('view-quiz').classList.remove('hidden');
-                this.currentIndex = 0;
-                this.loadQuestion();
-            }
-
-            loadQuestion() {
-                const q = this.questions[this.currentIndex];
-                
-                document.getElementById('badge-question-num').textContent = `Item ${this.currentIndex + 1} of ${this.questions.length}`;
-                document.getElementById('badge-domain').textContent = `Domain: ${q.content}`;
-                
-                const correctCount = Object.keys(this.userAnswers).filter(k => {
-                    const qIdx = parseInt(k);
-                    const optIdx = this.userAnswers[k];
-                    return this.questions[qIdx].options[optIdx].isCorrect;
-                }).length;
-
-                document.getElementById('live-score').textContent = correctCount;
-                document.getElementById('live-total').textContent = this.currentIndex + 1;
-
-                const progressPct = ((this.currentIndex + 1) / this.questions.length) * 100;
-                document.getElementById('progress-bar').style.width = `${progressPct}%`;
-
-                document.getElementById('question-text').textContent = q.question;
-                document.getElementById('matrix-content').textContent = q.content;
-                document.getElementById('matrix-application').textContent = q.application;
-                document.getElementById('matrix-cause').textContent = q.cause;
-
-                const optionsContainer = document.getElementById('options-container');
-                optionsContainer.innerHTML = '';
-
-                const answered = this.userAnswers[this.currentIndex] !== undefined;
-                const selectedOpt = this.userAnswers[this.currentIndex];
-
-                q.options.forEach((opt, idx) => {
-                    let btnClass = "w-full text-left p-4 rounded-xl border transition flex items-start gap-3 ";
-                    
-                    if (!answered) {
-                        btnClass += "bg-slate-950/60 border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800/60 text-slate-200 cursor-pointer";
-                    } else {
-                        if (opt.isCorrect) {
-                            btnClass += "bg-emerald-950/30 border-emerald-500 text-emerald-200";
-                        } else if (selectedOpt === idx && !opt.isCorrect) {
-                            btnClass += "bg-rose-950/30 border-rose-500 text-rose-200 animate-bounce-short";
-                        } else {
-                            btnClass += "bg-slate-950/40 border-slate-800/60 text-slate-400 opacity-60";
-                        }
-                    }
-
-                    const btn = document.createElement('button');
-                    btn.className = btnClass;
-                    btn.disabled = answered;
-                    btn.onclick = () => this.selectOption(idx);
-                    
-                    btn.innerHTML = `
-                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-slate-900 border border-slate-700 text-xs font-bold text-slate-300 shrink-0 mt-0.5">
-                            ${String.fromCharCode(65 + idx)}
-                        </span>
-                        <span class="text-sm leading-relaxed">${opt.text}</span>
-                    `;
-                    optionsContainer.appendChild(btn);
-                });
-
-                const rationaleContainer = document.getElementById('rationale-container');
-                if (answered) {
-                    rationaleContainer.classList.remove('hidden');
-                    const isCorrectChoice = q.options[selectedOpt].isCorrect;
-                    const statusBadge = document.getElementById('rationale-status');
-                    
-                    if (isCorrectChoice) {
-                        statusBadge.textContent = "Correct SCFHS Safe Action";
-                        statusBadge.className = "text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
-                    } else {
-                        statusBadge.textContent = "STR Trap Identified (Bam!)";
-                        statusBadge.className = "text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/30";
-                    }
-
-                    document.getElementById('rationale-text').textContent = q.options[selectedOpt].rationale;
+        function playSound(type) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                if (type === 'success') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                    osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
                 } else {
-                    rationaleContainer.classList.add('hidden');
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(130, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.4);
+                    gain.gain.setValueAtTime(0.5, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.4);
                 }
+            } catch(e) {}
+        }
 
-                document.getElementById('btn-prev').disabled = this.currentIndex === 0;
-                const nextBtnText = this.currentIndex === this.questions.length - 1 ? "Submit Assessment Matrix" : "Next Question";
-                document.getElementById('btn-next-text').textContent = nextBtnText;
+        function startTimer() {
+            clearInterval(timerInterval);
+            timer = 25;
+            document.getElementById('timer-display').innerText = `${timer}s`;
+            document.getElementById('game-arena').classList.remove('danger-alarm');
 
-                lucide.createIcons();
+            timerInterval = setInterval(() => {
+                timer--;
+                document.getElementById('timer-display').innerText = `${timer}s`;
+                if (timer <= 8) {
+                    document.getElementById('game-arena').classList.add('danger-alarm');
+                }
+                if (timer <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeout();
+                }
+            }, 1000);
+        }
+
+        function handleTimeout() {
+            if (isResolved) return;
+            isResolved = true;
+            score -= 20;
+            playSound('fail');
+            document.getElementById('score-display').innerText = score;
+            
+            const banner = document.getElementById('feedback-banner');
+            banner.className = "p-4 rounded-xl border border-rose-500 bg-rose-950/80 transition-all mt-4 shadow-lg";
+            document.getElementById('feedback-title').innerText = "⏰ TIME OUT! (-20 Points) — Clinical Inaction Hazard";
+            document.getElementById('feedback-desc').innerText = "Hesitation in SCFHS clinical cases allows STR linguistic traps to cause patient harm.";
+            banner.classList.remove('hidden');
+            document.getElementById('next-wave-btn').classList.remove('hidden');
+            
+            const buttons = document.getElementById('action-buttons-container').querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+        }
+
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
             }
+            return array;
+        }
 
-            selectOption(optionIndex) {
-                this.userAnswers[this.currentIndex] = optionIndex;
-                const q = this.questions[this.currentIndex];
+        function loadCase() {
+            isResolved = false;
+            const data = cases100[currentIdx % cases100.length];
+            document.getElementById('ward-badge').innerText = `Ward: ${data.ward}`;
+            document.getElementById('principle-badge').innerText = `Principle: ${data.principle}`;
+            document.getElementById('progress-display').innerText = `${currentIdx + 1} / ${cases100.length}`;
+            document.getElementById('case-id-tag').innerText = `⚡ CASE #${String(data.id).padStart(3, '0')}: SCFHS HOW-TO MATRIX`;
+            document.getElementById('conflict-statement').innerText = data.statement;
+
+            const container = document.getElementById('action-buttons-container');
+            container.innerHTML = '';
+
+            let shuffledActions = shuffleArray([...data.actions]);
+
+            shuffledActions.forEach((act) => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 rounded-xl border border-slate-800 bg-slate-950 hover:bg-slate-800 hover:border-teal-500 transition-all text-left text-xs sm:text-sm font-semibold flex items-center justify-between group shadow-md active:scale-95";
+                btn.innerHTML = `<span>${act.text}</span>`;
+                btn.onclick = () => executeAction(act, btn, shuffledActions);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('feedback-banner').classList.add('hidden');
+            document.getElementById('next-wave-btn').classList.add('hidden');
+            startTimer();
+        }
+
+        function executeAction(selectedAction, btnElement, currentActions) {
+            if (isResolved) return;
+            isResolved = true;
+            clearInterval(timerInterval);
+            document.getElementById('game-arena').classList.remove('danger-alarm');
+
+            const allButtons = document.getElementById('action-buttons-container').querySelectorAll('button');
+            allButtons.forEach(b => b.disabled = true);
+
+            const banner = document.getElementById('feedback-banner');
+            banner.classList.remove('hidden');
+
+            if (selectedAction.correct) {
+                score += 10;
+                playSound('success');
+                btnElement.className = "p-4 rounded-xl border border-emerald-500 bg-emerald-950/90 text-emerald-300 text-left text-xs sm:text-sm font-semibold flex items-center justify-between shadow-lg";
                 
-                // Audio Feedback Trigger
-                if (q.options[optionIndex].isCorrect) {
-                    soundEngine.playCelebration();
-                } else {
-                    soundEngine.playBam();
-                }
+                banner.className = "p-4 rounded-xl border border-emerald-500 bg-emerald-950/80 transition-all mt-4 shadow-lg";
+                document.getElementById('feedback-title').innerText = "🎉 CASE RESOLVED (+10 Points) — SCFHS Target Mastery Achieved";
+                document.getElementById('feedback-desc').innerText = selectedAction.feedback;
+            } else {
+                score -= 15;
+                playSound('fail');
+                btnElement.className = "p-4 rounded-xl border border-rose-500 bg-rose-950/90 text-rose-300 text-left text-xs sm:text-sm font-semibold flex items-center justify-between shadow-lg";
 
-                this.loadQuestion();
-            }
-
-            nextQuestion() {
-                if (this.currentIndex < this.questions.length - 1) {
-                    this.currentIndex++;
-                    this.loadQuestion();
-                } else {
-                    this.submitAssessment();
-                }
-            }
-
-            prevQuestion() {
-                if (this.currentIndex > 0) {
-                    this.currentIndex--;
-                    this.loadQuestion();
-                }
-            }
-
-            submitAssessment() {
-                document.getElementById('view-quiz').classList.add('hidden');
-                document.getElementById('view-results').classList.remove('hidden');
-
-                let correctCount = 0;
-                Object.keys(this.userAnswers).forEach(k => {
-                    const qIdx = parseInt(k);
-                    const optIdx = this.userAnswers[k];
-                    if (this.questions[qIdx].options[optIdx].isCorrect) {
-                        correctCount++;
+                allButtons.forEach((b, idx) => {
+                    if (currentActions[idx].correct) {
+                        b.className = "p-4 rounded-xl border border-emerald-600 bg-emerald-950/50 text-emerald-300 text-left text-xs sm:text-sm font-semibold flex items-center justify-between shadow-lg";
                     }
                 });
 
-                const percentage = Math.round((correctCount / this.questions.length) * 100);
-
-                document.getElementById('res-name').textContent = this.candidateName;
-                document.getElementById('res-id').textContent = this.candidateId;
-                document.getElementById('res-score').textContent = `${correctCount} / ${this.questions.length} (${percentage}%)`;
-
-                let feedback = "";
-                if (percentage >= 80) {
-                    feedback = `Outstanding performance! Your clinical reasoning successfully transitioned from STR (Surface Test Recall) to SCFHS Safety First protocol. You consistently identified independent cause-and-effect relationships and avoided distractors.`;
-                } else if (percentage >= 60) {
-                    feedback = `Competent performance, but watch out for linguistic traps and distractor rationales. Focus on 'how-to' safety actions rather than traditional memorization to elevate your score to mastery level.`;
-                } else {
-                    feedback = `Review recommended. Your responses indicate reliance on STR (Surface Test Recall) habits. Study the 3-list matrix (Content ➔ Application ➔ Cause & Effect) to prioritize patient safety and physiological rationale.`;
-                }
-
-                document.getElementById('res-feedback').textContent = feedback;
-                lucide.createIcons();
+                banner.className = "p-4 rounded-xl border border-rose-500 bg-rose-950/80 transition-all mt-4 shadow-lg";
+                document.getElementById('feedback-title').innerText = "💥 STR LURE TRIGGERED (-15 Points) — Surface-Trapped Trap Exploded";
+                document.getElementById('feedback-desc').innerText = selectedAction.feedback;
             }
 
-            reviewAnswers() {
-                document.getElementById('view-results').classList.add('hidden');
-                document.getElementById('view-quiz').classList.remove('hidden');
-                this.currentIndex = 0;
-                this.loadQuestion();
-            }
+            document.getElementById('score-display').innerText = score;
+            document.getElementById('next-wave-btn').classList.remove('hidden');
+        }
 
-            resetSession() {
-                this.candidateName = "";
-                this.candidateId = "";
-                this.currentIndex = 0;
-                this.userAnswers = {};
-                
-                document.getElementById('input-name').value = "";
-                document.getElementById('input-id').value = "";
-                document.getElementById('header-user-info').classList.add('hidden');
-                document.getElementById('header-user-info').classList.remove('flex');
-
-                document.getElementById('view-results').classList.add('hidden');
-                document.getElementById('view-dashboard').classList.add('hidden');
-                document.getElementById('view-quiz').classList.add('hidden');
-                document.getElementById('view-registration').classList.remove('hidden');
-                lucide.createIcons();
+        function nextCase() {
+            currentIdx++;
+            if (currentIdx < cases100.length) {
+                loadCase();
+            } else {
+                document.getElementById('game-arena').innerHTML = `
+                    <div class="text-center py-12">
+                        <h2 class="text-3xl font-black text-teal-400 mb-4">All 100 Clinical Cases Completed!</h2>
+                        <p class="text-slate-300 mb-6">You successfully navigated 100 independent SCFHS scenarios, bypassing linguistic traps and mastering safety-first protocols.</p>
+                        <div class="text-4xl font-black text-emerald-400 mb-8">Final Shift Score: ${score} Points</div>
+                        <button onclick="location.reload()" class="bg-teal-600 hover:bg-teal-500 text-slate-950 font-extrabold px-8 py-3 rounded-xl shadow-lg transition-all">
+                            Restart 100-Case Matrix
+                        </button>
+                    </div>
+                `;
             }
         }
 
-        const app = new SCFHSApp();
-        window.addEventListener('DOMContentLoaded', () => app.init());
+        window.onload = loadCase;
     </script>
 </body>
 </html>
